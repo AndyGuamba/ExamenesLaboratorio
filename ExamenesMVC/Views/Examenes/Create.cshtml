@@ -1,0 +1,71 @@
+﻿@using Examenes.Modelos.Enums
+@model Examenes.Modelos.Entidades.Examen
+
+<div class="container mt-4">
+    <h2 class="text-primary mb-4">Registrar Nuevo Examen</h2>
+
+    <div class="alert alert-info shadow-sm mb-4">
+        <p class="fw-bold mb-2">Paso 1: Seleccione el tipo de examen que desea registrar:</p>
+        <div class="btn-group">
+            <a asp-action="Create" asp-route-tipo="@TipoExamen.Sangre"
+               class="btn @(ViewBag.TipoActual == TipoExamen.Sangre ? "btn-danger fw-bold" : "btn-outline-danger")">🩸 Sangre</a>
+            <a asp-action="Create" asp-route-tipo="@TipoExamen.Orina"
+               class="btn @(ViewBag.TipoActual == TipoExamen.Orina ? "btn-warning fw-bold text-dark" : "btn-outline-warning text-dark")">🚽 Orina</a>
+            <a asp-action="Create" asp-route-tipo="@TipoExamen.Heces"
+               class="btn @(ViewBag.TipoActual == TipoExamen.Heces ? "btn-success fw-bold" : "btn-outline-success")">💩 Heces</a>
+        </div>
+    </div>
+
+    <form asp-action="Create" method="post" class="card p-4 shadow-sm border-0 bg-white">
+
+        <input type="hidden" asp-for="Tipo" value="@ViewBag.TipoActual" />
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label class="fw-bold text-secondary mb-2">Paso 2: Seleccionar Paciente</label>
+                <select asp-for="PacienteCedula" class="form-select border-primary" required>
+                    <option value="">-- Buscar Paciente por Cédula --</option>
+                    @foreach (var pac in ViewBag.Pacientes as List<Examenes.Modelos.Entidades.Paciente>)
+                    {
+                        <option value="@pac.Cedula">@pac.Cedula - @pac.Nombre @pac.Apellido</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="fw-bold text-secondary mb-2">Paso 3: Fecha del Examen</label>
+                <input asp-for="Fecha" type="date" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="p-4 border rounded bg-light">
+            <h5 class="text-secondary mb-4 border-bottom pb-2">Paso 4: Ingrese resultados de @ViewBag.TipoActual</h5>
+
+            @if (ViewBag.Parametros != null && ((List<Examenes.Modelos.Entidades.ParametroExamen>)ViewBag.Parametros).Any())
+            {
+                @foreach (var p in ViewBag.Parametros as List<Examenes.Modelos.Entidades.ParametroExamen>)
+                {
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-4">
+                            <strong class="text-dark">@p.Nombre</strong>
+                            <span class="text-muted small">(@p.UnidadMedida)</span>
+                        </div>
+                        <div class="col-3">
+                            <input type="number" step="any" class="form-control" name="resultados[@p.Id]" placeholder="0.00" required />
+                        </div>
+                        <div class="col-5 text-muted small">
+                            Rango normal: @p.RangoMinimo - @p.RangoMaximo
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="alert alert-warning">No hay parámetros configurados para esta categoría en la base de datos.</div>
+            }
+        </div>
+
+        <div class="text-center mt-5">
+            <button type="submit" class="btn btn-success btn-lg px-5 shadow">Guardar Resultados en Base de Datos</button>
+        </div>
+    </form>
+</div>

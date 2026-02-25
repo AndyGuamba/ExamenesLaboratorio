@@ -1,0 +1,49 @@
+﻿@using Examenes.Modelos.Enums
+@model IEnumerable<Examenes.Modelos.Entidades.ParametroExamen>
+
+<div class="container mt-4">
+    <h2 class="mb-4">Catálogo de Pruebas de Laboratorio</h2>
+
+    <div class="mb-4">
+        <span class="fw-bold me-2">Filtrar por:</span>
+        <div class="btn-group shadow-sm">
+            <a asp-action="Index" asp-route-tipo="@TipoExamen.Sangre"
+               class="btn @(ViewBag.TipoActual == TipoExamen.Sangre ? "btn-danger fw-bold" : "btn-outline-danger")">🩸 Sangre</a>
+
+            <a asp-action="Index" asp-route-tipo="@TipoExamen.Orina"
+               class="btn @(ViewBag.TipoActual == TipoExamen.Orina ? "btn-warning fw-bold text-dark" : "btn-outline-warning text-dark")">🚽 Orina</a>
+
+            <a asp-action="Index" asp-route-tipo="@TipoExamen.Heces"
+               class="btn @(ViewBag.TipoActual == TipoExamen.Heces ? "btn-success fw-bold" : "btn-outline-success")">💩 Heces</a>
+        </div>
+    </div>
+
+    <table class="table table-striped border shadow-sm align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Prueba</th>
+                <th>Categoría</th>
+                <th>Rangos Normales</th>
+                <th>Unidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr><td colspan="4" class="text-center py-3 text-muted">No hay parámetros registrados en esta categoría.</td></tr>
+            }
+            else
+            {
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">@p.Nombre</td>
+                        <td><span class="badge bg-secondary">@p.Categoria</span></td>
+                        <td>@p.RangoMinimo - @p.RangoMaximo</td>
+                        <td>@p.UnidadMedida</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

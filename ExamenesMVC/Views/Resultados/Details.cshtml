@@ -1,0 +1,101 @@
+﻿@model Examenes.Modelos.Entidades.Examen
+
+<div class="container mt-5 p-4 border shadow bg-white">
+    <h2 class="text-center text-primary mb-4">REPORTE DE LABORATORIO</h2>
+
+    <div class="row border-bottom pb-3 mb-4">
+        <div class="col-6">
+            <p><strong>Paciente:</strong> @Model.Paciente?.Nombre @Model.Paciente?.Apellido</p>
+            <p><strong>Cédula:</strong> @Model.PacienteCedula</p>
+        </div>
+        <div class="col-6 text-end">
+            <p><strong>Fecha:</strong> @Model.Fecha.ToString("dd/MM/yyyy HH:mm")</p>
+            <p><strong>Tipo:</strong> <span class="badge bg-secondary">@Model.Tipo</span></p>
+        </div>
+    </div>
+
+    <table class="table table-bordered align-middle">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>Parámetro</th>
+                <th>Resultado</th>
+                <th>Estado</th>
+                <th>Rango Normal</th>
+                <th>Unidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var res in Model.Resultados)
+            {
+                var estado = "Normal";
+                var colorClase = "text-dark";
+
+                if (res.Parametro != null)
+                {
+                    if (res.ValorObtenido > res.Parametro.RangoMaximo)
+                    {
+                        estado = "ALTO";
+                        colorClase = "text-danger fw-bold"; // Rojo para ALTO
+                    }
+                    else if (res.ValorObtenido < res.Parametro.RangoMinimo)
+                    {
+                        estado = "BAJO";
+                        colorClase = "text-warning fw-bold"; // Amarillo/Naranja para BAJO
+                    }
+                }
+
+                <tr class="text-center">
+                    <td class="text-start">@res.Parametro?.Nombre</td>
+                    <td class="@colorClase">@res.ValorObtenido</td>
+                    <td class="@colorClase">@estado</td>
+                    <td>@res.Parametro?.RangoMinimo - @res.Parametro?.RangoMaximo</td>
+                    <td class="text-muted">@res.Parametro?.UnidadMedida</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="mt-5 p-3 bg-light border rounded">
+        <h5 class="text-secondary"><i class="bi bi-clock-history"></i> Historial de Exámenes de este Paciente</h5>
+
+        @{
+            // Obtenemos la lista de forma segura para evitar NullReferenceException
+            var historial = (ViewBag.Historial as List<Examenes.Modelos.Entidades.Examen>) ?? new List<Examenes.Modelos.Entidades.Examen>();
+            // Excluimos el examen que estamos viendo en este momento
+            var historialFiltrado = historial.Where(h => h.Id != Model.Id).ToList();
+        }
+
+        @if (historialFiltrado.Any())
+        {
+            <table class="table table-sm mt-3 bg-white shadow-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>Fecha del Examen</th>
+                        <th>Tipo de Prueba</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var h in historialFiltrado)
+                    {
+                        <tr>
+                            <td>@h.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td><span class="badge bg-secondary">@h.Tipo</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="alert alert-light border mt-3 mb-0 text-muted">
+                <i class="bi bi-info-circle me-2"></i> No hay otros exámenes previos registrados para este paciente en el sistema.
+            </div>
+        }
+    </div>
+
+    <div class="mt-4 text-center">
+        <a asp-controller="Examenes" asp-action="Index" asp-route-tipo="@Model.Tipo" class="btn btn-secondary shadow-sm">
+            ← Regresar a la lista de @Model.Tipo
+        </a>
+    </div>
+</div>

@@ -1,0 +1,31 @@
+﻿@model Examenes.Modelos.Entidades.Paciente
+
+<div class="container mt-4">
+    <h2 class="text-primary">Registrar Nuevo Paciente</h2>
+    <div class="card p-4 shadow-sm mt-3" style="max-width: 600px;">
+        <form asp-action="Create" method="post">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Número de Cédula</label>
+                <input asp-for="Cedula" class="form-control" required placeholder="Ej: 1711599157" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Nombres</label>
+                <input asp-for="Nombre" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Apellidos</label>
+                <input asp-for="Apellido" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Género</label>
+                <select asp-for="Genero" class="form-select" required>
+                    <option value="">-- Seleccione --</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success w-100 mt-3">Guardar Paciente</button>
+        </form>
+    </div>
+</div>
